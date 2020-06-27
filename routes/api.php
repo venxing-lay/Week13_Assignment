@@ -13,7 +13,10 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+Route::get('categories','API\CategoryApiController@index')->name('api.category.index');
+Route::post('categories','API\CategoryApiController@store')->name('api.category.store');
+Route::put('categories/{category}/update','API\CategoryApiController@update')->name('api.category.update');
+Route::delete('categories/{category}/delete','API\CategoryApiController@delete')->name('api.category.delete');
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
+Route::resource("/posts", "API\PostApiController");
+
