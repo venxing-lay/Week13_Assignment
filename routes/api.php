@@ -18,5 +18,8 @@ Route::post('categories','API\CategoryApiController@store')->name('api.category.
 Route::put('categories/{category}/update','API\CategoryApiController@update')->name('api.category.update');
 Route::delete('categories/{category}/delete','API\CategoryApiController@delete')->name('api.category.delete');
 
-Route::resource("/posts", "API\PostApiController");
+Route::get('posts','API\PostApiController@index')->name('api.post.index');
+Route::post('posts','API\PostApiController@store')->name('api.post.store');
+Route::put('posts/{post}/update','API\PostApiController@update')->name('api.post.update');
+Route::delete('posts/{post}/delete','API\PostApiController@delete')->name('api.post.delete');
 

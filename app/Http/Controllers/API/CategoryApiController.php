@@ -9,6 +9,54 @@ use Illuminate\Support\Facades\Validator;
 
 class CategoryApiController extends Controller
 {
+    /**
+        @SWG\Get(
+            path="/categories",
+            summary="Get categories list",
+            tags={"Category"},
+            produces={"application/json"},
+            description="Get categories list",
+
+            @SWG\Parameter(
+                name="name",
+                description="name",
+                type="string",
+                required=false,
+                in="formData",
+            ),
+
+            @SWG\Response(
+                response=200,
+                description="successful",
+                @SWG\Schema(
+                    type="object",
+                    @SWG\Property(
+                            property="success",
+                            type="boolean",
+                        ),
+                    @SWG\Property(
+                            property="message",
+                            type="string",
+                        ),
+                    @SWG\Property(
+                        property="data",
+                        type="object",
+                        @SWG\Property(
+                            property="category",
+                            type="array",
+                            @SWG\Items(ref="#/definitions/Category")
+                        ),
+                    ),   
+                )
+            ),
+    
+    
+            @SWG\Response(
+                response=500,
+                description="interal server error (error inserting to database)",
+            ),
+        )
+     */
     public function index(Request $request) {
         if($request->has('name')){
             $categories = Category::where('name', 'LIKE', '%' . $request->get('name') . '%')->get();
@@ -21,6 +69,58 @@ class CategoryApiController extends Controller
             'data' => $categories->toArray()
         ]);
     }
+
+    /**
+        @SWG\Post(
+            path="/categories",
+            summary="Create category",
+            tags={"Category"},
+            produces={"application/json"},
+            description="Create category",
+
+            @SWG\Parameter(
+                name="name",
+                description="name",
+                type="string",
+                required=true,
+                in="formData",
+            ),
+
+            @SWG\Response(
+                response=200,
+                description="store successful",
+                @SWG\Schema(
+                    type="object",
+                    @SWG\Property(
+                            property="success",
+                            type="boolean",
+                        ),
+                    @SWG\Property(
+                            property="message",
+                            type="string",
+                        ),
+                    @SWG\Property(
+                        property="data",
+                        type="object",
+                        @SWG\Property(
+                            property="category",
+                            type="array",
+                            @SWG\Items(ref="#/definitions/Category")
+                        ),
+                    ),   
+                )
+            ),
+    
+            @SWG\Response(
+                response=400,
+                description="Missing field",
+            ),
+            @SWG\Response(
+                response=500,
+                description="interal server error (error inserting to database)",
+            ),
+        )
+     */
     public function store(Request $request) {
         $input = $request->all();
         $validator = Validator::make($input, [
@@ -41,6 +141,58 @@ class CategoryApiController extends Controller
         ]);
     }
 
+    /**
+        @SWG\PUT(
+            path="/categories/{id}",
+            summary="Update Category",
+            tags={"Category"},
+            produces={"application/json"},
+            description="Update Category",
+        
+            @SWG\Parameter(
+                name="category",
+                description="category",
+                type="string",
+                required=true,
+                in="formData",
+            ),
+            @SWG\Response(
+                response=200,
+                description="successful",
+                @SWG\Schema(
+                    type="object",
+                    @SWG\Property(
+                        property="success",
+                        type="boolean",
+                    ),
+                    @SWG\Property(
+                        property="message",
+                        type="string",
+                    ),
+                    @SWG\Property(
+                        property="data",
+                        type="object",
+                        @SWG\Property(
+                            property="id",
+                            type="integer",
+                        ),
+                        @SWG\Property(
+                            property="category",
+                            type="string"
+                        ),
+                    ),
+                )
+            ),
+            @SWG\Response(
+                response=500,
+                description="interal server error (error inserting to database)",
+            ),
+            @SWG\Response(
+                response=302,
+                description="wrong validation",
+            ),
+        ),
+     */
     public function update(Category $category, Request $request) {
         $input = $request->all();
         $validator = Validator::make($input, [
@@ -51,7 +203,7 @@ class CategoryApiController extends Controller
                 'success' => false,
                 'message' => 'fail to store category',
                 'data' => $input
-            ], 400);
+            ], 302);
         }
 
         $category->fill($input);
@@ -62,7 +214,43 @@ class CategoryApiController extends Controller
             'data' => $category
         ]);
     }
-
+    /**
+        @SWG\DELETE(
+            path="/categories/{id}",
+            summary="Delete one specific category",
+            tags={"Category"},
+            produces={"application/json"},
+            description="Delete one specific category",
+        
+            @SWG\Response(
+                response=200,
+                description="successful",
+                @SWG\Schema(
+                    type="object",
+                    @SWG\Property(
+                        property="success",
+                        type="boolean",
+                    ),
+                    @SWG\Property(
+                        property="message",
+                        type="string",
+                    ),
+                    @SWG\Property(
+                        property="data",
+                        type="object",
+                    ),
+                )
+            ),
+            @SWG\Response(
+                response=500,
+                description="interal server error (error inserting to database)",
+            ),
+            @SWG\Response(
+                response=404,
+                description="Category Not Found",
+            ),
+        )
+     */
     public function delete(Category $category, Request $request) {
 
         $category->delete();
